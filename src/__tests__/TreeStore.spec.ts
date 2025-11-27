@@ -130,6 +130,10 @@ describe('TreeStore', () => {
         expect(store.getItem(6)).toBeUndefined();
         expect(store.getItem(7)).toBeUndefined();
         expect(store.getItem(8)).toBeUndefined();
+
+        // А связь родителя (1) с удалённой веткой тоже разорвана
+        const childrenOf1 = store.getChildren(1).map((i) => i.id);
+        expect(childrenOf1).toEqual([3]);
     });
 
     it('removeItem should throw error if item does not exists', () => {

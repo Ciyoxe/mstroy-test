@@ -62,7 +62,7 @@ export class TreeStore<T extends TreeItem> {
         }
 
         const result: T[] = [];
-        const stack: Id[] = [id];
+        const stack: Id[] = [...this.childrenGroupedByParent.get(id)!];
 
         while (stack.length) {
             const currentId = stack.pop()!;
