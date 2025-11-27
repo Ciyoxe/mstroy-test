@@ -140,4 +140,34 @@ describe('TreeStore', () => {
         const store = new TreeStore(items);
         expect(() => store.removeItem(999)).throws();
     });
+
+    it('getAllChildren should return empty array for leaf nodes', () => {
+        const store = new TreeStore(items);
+        expect(store.getAllChildren(8)).toEqual([]);
+    });
+
+    it('updateItem without parent change preserves sibling relation', () => {
+        const store = new TreeStore(items);
+
+        store.updateItem({ id: 4, parent: '91064cee', label: 'Айтем 4 переименован' });
+
+        expect(store.getItem(4)?.label).toBe('Айтем 4 переименован');
+        const siblings = store.getChildren('91064cee').map((i) => i.id);
+        expect(siblings).toContain(4);
+        expect(siblings.length).toBe(3);
+    });
+
+    it('getAllParents should return empty array for unknown id', () => {
+        const store = new TreeStore(items);
+        expect(store.getAllParents(999)).toEqual([]);
+    });
+
+    it('addItem can insert a new root element', () => {
+        const store = new TreeStore(items);
+        store.addItem({ id: 'root', parent: null, label: 'Новый корень' });
+
+        const roots = store.getChildren(null);
+        expect(roots.map((i) => i.id)).toContain('root');
+        expect(store.getItem('root')?.parent).toBeNull();
+    });
 });

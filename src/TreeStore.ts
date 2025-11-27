@@ -43,7 +43,7 @@ export class TreeStore<T extends TreeItem> {
     }
 
     /** Возвращает прямых дочерних элементов по id родителя. */
-    getChildren(id: Id): T[] {
+    getChildren(id: Id | null): T[] {
         const childrenIds = this.childrenGroupedByParent.get(id);
         const childrenItems = [] as T[];
 
@@ -56,7 +56,7 @@ export class TreeStore<T extends TreeItem> {
     /**
      * Возвращает всех дочерних элементов (прямых и вложенных) для элемента с данным id.
      */
-    getAllChildren(id: Id): T[] {
+    getAllChildren(id: Id | null): T[] {
         if (!this.childrenGroupedByParent.has(id)) {
             return [];
         }
