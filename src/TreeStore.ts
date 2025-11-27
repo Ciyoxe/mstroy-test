@@ -4,20 +4,20 @@ export type TreeItem = { id: Id; parent: Id | null } & Record<string, unknown>;
 
 export class TreeStore<T extends TreeItem> {
     private itemsGroupedById: Map<Id, T>;
-    private childrenGroupedByParent: Map<Id | null, Id[]>;
+    private childrenGroupedByParent: Map<Id | null, Set<Id>>;
 
     private setChild(parentId: Id | null, childId: Id) {
         const children = this.childrenGroupedByParent.get(parentId);
         if (children) {
-            children.push(childId);
+            children.add(childId);
         } else {
-            this.childrenGroupedByParent.set(parentId, [childId]);
+            this.childrenGroupedByParent.set(parentId, new Set([childId]));
         }
     }
     private removeChild(parentId: Id | null, childId: Id) {
         const children = this.childrenGroupedByParent.get(parentId);
         if (children) {
-            children.splice(children.indexOf(childId), 1);
+            children.delete(childId);
         } else {
             throw new Error(`${childId} is not a child of ${parentId}`);
         }
@@ -44,27 +44,36 @@ export class TreeStore<T extends TreeItem> {
 
     /** Возвращает прямых дочерних элементов по id родителя. */
     getChildren(id: Id): T[] {
-        const children = this.childrenGroupedByParent.get(id);
-        if (children) {
-            return children.map((id) => this.getItem(id)!);
+        const childrenIds = this.childrenGroupedByParent.get(id);
+        const childrenItems = [] as T[];
+
+        if (childrenIds) {
+            for (const id of childrenIds) childrenItems.push(this.getItem(id)!);
         }
-        return [];
+        return childrenItems;
     }
 
     /**
      * Возвращает всех дочерних элементов (прямых и вложенных) для элемента с данным id.
      */
     getAllChildren(id: Id): T[] {
+        if (!this.childrenGroupedByParent.has(id)) {
+            return [];
+        }
+
         const result: T[] = [];
-        const stack: T[] = this.getChildren(id);
+        const stack: Id[] = [id];
 
         while (stack.length) {
-            const current = stack.pop()!;
+            const currentId = stack.pop()!;
+            const current = this.getItem(currentId);
+            if (!current) continue;
+
             result.push(current);
 
-            const children = this.getChildren(current.id);
-            if (children && children.length) {
-                stack.push(...children);
+            const childrenIds = this.childrenGroupedByParent.get(currentId);
+            if (childrenIds && childrenIds.size) {
+                stack.push(...childrenIds.values());
             }
         }
 
@@ -125,11 +134,14 @@ export class TreeStore<T extends TreeItem> {
 
     /** Удаляет элемент и всех его потомков из хранилища. */
     removeItem(id: Id): void {
-        if (!this.itemsGroupedById.has(id)) {
+        const rootItem = this.getItem(id);
+        if (!rootItem) {
             throw new Error(`Item with id ${id} does not exists`);
         }
 
-        const itemsToDelete = this.getAllChildren(id).concat([this.getItem(id)!]);
+        this.removeChild(rootItem.parent, rootItem.id);
+
+        const itemsToDelete = this.getAllChildren(id).concat([rootItem]);
         for (const item of itemsToDelete) {
             this.itemsGroupedById.delete(item.id);
             this.childrenGroupedByParent.delete(item.id);
