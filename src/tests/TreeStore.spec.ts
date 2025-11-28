@@ -1,6 +1,5 @@
+import { TreeStore, type TreeItem } from '@/lib/TreeStore';
 import { describe, expect, it } from 'vitest';
-import type { TreeItem } from '../TreeStore';
-import { TreeStore } from '../TreeStore';
 
 const seedItems: TreeItem[] = [
     { id: 1, parent: null, label: 'Айтем 1' },

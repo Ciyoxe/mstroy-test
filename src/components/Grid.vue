@@ -14,10 +14,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends TreeItem">
-import { computed } from 'vue';
-import { AgGridVue } from 'ag-grid-vue3';
+import { TreeStore, type TreeItem } from '@/lib/TreeStore';
 import type { ValueGetterParams } from 'ag-grid-community';
-import { TreeStore, type TreeItem } from '../TreeStore';
+import { AgGridVue } from 'ag-grid-vue3';
+import { computed } from 'vue';
 
 const { items, columnNames } = defineProps<{
     items: T[];
@@ -39,6 +39,7 @@ const columnDefs = computed(() => {
             return params.data[key];
         },
         flex: 1,
+        minWidth: 300,
     }));
 });
 
@@ -56,7 +57,7 @@ const autoGroupColumnDef = {
     cellRendererParams: {
         suppressCount: true,
     },
-    width: 300,
+    minWidth: 300,
 };
 
 const getDataPath = (data: TreeItem) =>
@@ -86,7 +87,7 @@ const rowNumbers = {
 <style scoped>
 .grid {
     width: 100%;
-    height: 500px;
+    height: 100%;
     margin: 0 auto;
 }
 

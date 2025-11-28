@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { mount, type VueWrapper } from '@vue/test-utils';
-import { defineComponent, h } from 'vue';
 import Grid from '@/components/grid.vue';
-import type { TreeItem } from '../TreeStore';
+import type { TreeItem } from '@/lib/TreeStore';
+import { mount, type VueWrapper } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
+import { defineComponent, h } from 'vue';
 
 const AgGridStub = defineComponent({
     name: 'AgGridVue',

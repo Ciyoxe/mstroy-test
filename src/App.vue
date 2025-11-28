@@ -1,5 +1,5 @@
 <template>
-    <main class="app-shell">
+    <main class="app">
         <TreeStoreGrid :items :column-names />
     </main>
 </template>
@@ -22,26 +22,15 @@ const columnNames = {
 };
 </script>
 
-<style scoped>
-.app-shell {
-    min-height: 100vh;
+<style>
+.app {
+    height: 100dvh;
     padding: 2rem 1rem;
     box-sizing: border-box;
-    background: #f7f8fc;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: system-ui, sans-serif;
 }
-
-header {
-    margin-bottom: 1.25rem;
-}
-
-header h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.75rem;
-}
-
-header p {
+body {
     margin: 0;
-    color: #5a5f70;
+    padding: 0;
 }
 </style>

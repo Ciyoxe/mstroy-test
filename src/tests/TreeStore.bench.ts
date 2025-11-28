@@ -1,5 +1,5 @@
+import { TreeStore, type TreeItem } from '@/lib/TreeStore';
 import { bench, describe } from 'vitest';
-import { TreeStore, type TreeItem } from '../TreeStore';
 
 type BenchmarkNode = TreeItem & { label: string };
 
