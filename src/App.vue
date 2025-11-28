@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import TreeStoreGrid from './components/grid.vue';
+import TreeStoreGrid from './components/Grid.vue';
 
 const items = [
     { id: 1, parent: null, label: 'Айтем 1' },

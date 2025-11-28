@@ -1,4 +1,4 @@
-import Grid from '@/components/grid.vue';
+import Grid from '@/components/Grid.vue';
 import type { TreeItem } from '@/lib/TreeStore';
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
