@@ -49,28 +49,27 @@ type ExposedGridProps = {
         minWidth?: number;
         headerComponent: new () => { getGui(): HTMLElement };
     };
+    treeData?: boolean;
+    animateRows?: boolean;
 };
 
 const mountGrid = () =>
     mount(Grid, {
-        props: {
-            items: sampleItems,
-            columnNames,
-        },
-        global: {
-            stubs: {
-                AgGridVue: AgGridStub,
-            },
-        },
+        props: { items: sampleItems, columnNames },
+        global: { stubs: { AgGridVue: AgGridStub } },
     });
 
 const getAgGridProps = (wrapper: VueWrapper): ExposedGridProps =>
     wrapper.findComponent(AgGridStub).props() as ExposedGridProps;
 
+const mountAndExtract = () => {
+    const wrapper = mountGrid();
+    return { wrapper, props: getAgGridProps(wrapper) };
+};
+
 describe('grid.vue', () => {
     it('passes normalized rowData and columnDefs to AgGridVue', () => {
-        const wrapper = mountGrid();
-        const props = getAgGridProps(wrapper);
+        const { props } = mountAndExtract();
 
         expect(props.rowData).toEqual(sampleItems);
         expect(props.columnDefs).toHaveLength(Object.keys(columnNames).length);
@@ -103,17 +102,21 @@ describe('grid.vue', () => {
     });
 
     it('builds correct hierarchical path via getDataPath', () => {
-        const wrapper = mountGrid();
-        const { getDataPath } = getAgGridProps(wrapper);
+        const { props } = mountAndExtract();
+        const { getDataPath } = props;
 
         const path = getDataPath(sampleItems[6]!);
         expect(path).toEqual(['1', '91064cee', '4', '7']);
+        expect(getDataPath(sampleItems[0]!)).toEqual(['1']);
     });
 
     it('exposes rowNumbers configuration with header component', () => {
-        const wrapper = mountGrid();
-        const { rowNumbers } = getAgGridProps(wrapper);
+        const {
+            props: { rowNumbers, treeData, animateRows },
+        } = mountAndExtract();
 
+        expect(treeData).toBe(true);
+        expect(animateRows).toBe(true);
         expect(rowNumbers.minWidth).toBe(80);
 
         const headerInstance = new rowNumbers.headerComponent();

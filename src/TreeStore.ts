@@ -57,9 +57,7 @@ export class TreeStore<T extends TreeItem> {
         return Boolean(this.childrenGroupedByParent.get(id)?.size);
     }
 
-    /**
-     * Возвращает всех дочерних элементов (прямых и вложенных) для элемента с данным id.
-     */
+    /** Возвращает всех дочерних элементов (прямых и вложенных) для элемента с данным id. */
     getAllChildren(id: Id | null): T[] {
         if (!this.childrenGroupedByParent.has(id)) {
             return [];
@@ -85,8 +83,7 @@ export class TreeStore<T extends TreeItem> {
     }
 
     /**
-     * Возвращает цепочку родителей, начиная с самого элемента,
-     * чей id передан в аргументе, и до корня.
+     * Возвращает цепочку родителей, начиная с самого элемента, чей id передан в аргументе, и до корня.
      * Порядок: [элемент, его родитель, ..., корневой элемент].
      */
     getAllParents(id: Id): T[] {
