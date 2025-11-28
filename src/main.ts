@@ -1,9 +1,8 @@
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
 import App from './App.vue';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+import { TreeDataModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-const app = createApp(App);
+ModuleRegistry.registerModules([AllCommunityModule, TreeDataModule, RowNumbersModule]);
 
-app.use(createPinia());
-
-app.mount('#app');
+createApp(App).mount('#app');

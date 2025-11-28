@@ -53,6 +53,10 @@ export class TreeStore<T extends TreeItem> {
         return childrenItems;
     }
 
+    hasChildren(id: Id | null) {
+        return Boolean(this.childrenGroupedByParent.get(id)?.size);
+    }
+
     /**
      * Возвращает всех дочерних элементов (прямых и вложенных) для элемента с данным id.
      */
