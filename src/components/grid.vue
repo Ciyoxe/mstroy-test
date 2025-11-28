@@ -2,15 +2,13 @@
     <div class="grid">
         <AgGridVue
             class="grid__table"
-            :columnDefs="columnDefs"
-            :defaultColDef="defaultColDef"
-            :autoGroupColumnDef="autoGroupColumnDef"
-            :rowData="rowData"
-            :getDataPath="getDataPath"
-            :getRowNodeId="getRowNodeId"
-            rowNumbers
-            treeData
             animateRows
+            treeData
+            :columnDefs
+            :autoGroupColumnDef
+            :rowData
+            :getDataPath
+            :rowNumbers
         />
     </div>
 </template>
@@ -18,7 +16,7 @@
 <script setup lang="ts" generic="T extends TreeItem">
 import { computed } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
-import type { ColDef, ValueGetterParams } from 'ag-grid-community';
+import type { ValueGetterParams } from 'ag-grid-community';
 import { TreeStore, type TreeItem } from '../TreeStore';
 
 const { items, columnNames } = defineProps<{
@@ -31,13 +29,6 @@ const { items, columnNames } = defineProps<{
 const store = new TreeStore<T>(items);
 const rowData = computed(() => store.getAll());
 
-const getDataPath = (data: TreeItem) => {
-    const parents = store.getAllParents(data.id);
-    return parents.reverse().map((item) => item.id.toString());
-};
-
-const getRowNodeId = (data: TreeItem) => data.id;
-
 const columnDefs = computed(() => {
     return Object.entries(columnNames).map(([key, name]) => ({
         headerName: name,
@@ -47,15 +38,11 @@ const columnDefs = computed(() => {
             }
             return params.data[key];
         },
+        flex: 1,
     }));
 });
 
-const defaultColDef = {
-    resizable: true,
-    sortable: true,
-};
-
-const autoGroupColumnDef: ColDef<T> = {
+const autoGroupColumnDef = {
     headerName: 'Категория',
     valueGetter: (params: ValueGetterParams<T>) => {
         if (!params.data) {
@@ -69,6 +56,30 @@ const autoGroupColumnDef: ColDef<T> = {
     cellRendererParams: {
         suppressCount: true,
     },
+    width: 300,
+};
+
+const getDataPath = (data: TreeItem) =>
+    store
+        .getAllParents(data.id)
+        .reverse()
+        .map((item) => item.id.toString());
+
+class RowNumberHeaderComponent {
+    private el;
+
+    constructor() {
+        this.el = document.createElement('span');
+        this.el.textContent = '№ п/п';
+    }
+    getGui() {
+        return this.el;
+    }
+}
+
+const rowNumbers = {
+    minWidth: 80,
+    headerComponent: RowNumberHeaderComponent,
 };
 </script>
 
